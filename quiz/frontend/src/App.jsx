@@ -1,9 +1,12 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 export default function App() {
   return (
-    <div className="h-screen flex justify-center items-center w-screen">
-      <div>tesxt</div>
-    </div>
+   <Router>
+    <Routes>
+      <Route/>
+    </Routes>
+   </Router>
   );
 }
