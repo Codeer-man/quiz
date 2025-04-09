@@ -1,0 +1,30 @@
+import QuizCard from './QuizCard';
+
+const QuizList = ({ quizzes }) => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+      {quizzes.map(quiz => (
+        <QuizCard
+          key={quiz.id}
+          id={quiz.id}
+          title={quiz.title}
+          questionCount={quiz.questionCount}
+          difficulty={quiz.difficulty}
+          category={quiz.category}
+          imageUrl={quiz.imageUrl}
+          onStart={(quizId) => console.log('Starting quiz:', quizId)}
+        />
+      ))}
+    </div>
+  );
+};
+
+backend data
+{
+  id: "123",
+  title: "JavaScript Basics",
+  questionCount: 15,
+  difficulty: "Medium", // Easy/Medium/Hard/Expert
+  category: "Programming",
+  imageUrl: "https://example.com/quiz-image.jpg"
+}
