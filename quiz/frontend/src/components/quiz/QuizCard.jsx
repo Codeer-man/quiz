@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FaBook,
   FaQuestionCircle,
@@ -88,13 +89,14 @@ const QuizCard = ({
           <span>{questionCount} questions</span>
         </div>
 
-        <button
+        <Link
+          to={"/quizPage"}
           onClick={() => onStart(id)}
           className="w-full flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-1.5 px-3 rounded-md transition-all duration-300 transform hover:scale-[1.02] text-sm"
         >
           <FaPlay className="mr-1.5" size={10} />
           Start Quiz
-        </button>
+        </Link>
       </div>
     </div>
   );
