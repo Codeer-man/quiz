@@ -51,9 +51,19 @@ const quizSchema = new mongoose.Schema(
       type: [questionSchema],
       default: [],
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+    url: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    publicId: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   { timestamps: true }
