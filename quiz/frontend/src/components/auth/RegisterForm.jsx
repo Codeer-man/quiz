@@ -1,136 +1,112 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { FaEnvelope, FaUser, FaLock } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-const RegistrationForm = () => {
+const Register = () => {
+  const api_url = import.meta.env.VITE_CREATER_USER;
+
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    async function fetchData() {
+      try {
+        const response = await fetch(api_url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message || "New User has been created");
+          navigate("/login");
+          setFormData({
+            username: "",
+            email: "",
+            password: "",
+          });
+        } else {
+          setError(data.error);
+          toast.error(data.message || "Registration failed. Please try again.");
+        }
+      } catch (error) {}
+    }
+    fetchData();
+  };
+
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4 bg-gray-100 dark:bg-zinc-800">
-      <form className="w-full max-w-md bg-white dark:bg-zinc-900 shadow-xl rounded-xl overflow-hidden border border-blue-300 dark:border-blue-700 transition-all duration-300 hover:shadow-2xl">
-        <div className="px-6 py-8 sm:px-10 sm:py-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-white mb-2">
-              Create Account
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400">
-              Join us today to get started
-            </p>
+    <div className="min-h-[80vh] bg-gradient-to-br from-blue-50 to-purple-50 flex justify-center items-center px-4">
+      <div className="bg-white shadow-xl rounded-xl max-w-md w-full p-8 space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">
+          Register
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-
-          <div className="space-y-6">
-            <div>
-              <label
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                htmlFor="name"
-              >
-                Full Name
-              </label>
-              <input
-                placeholder="John Doe"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="name"
-                type="text"
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                htmlFor="email"
-              >
-                Email Address
-              </label>
-              <input
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="email"
-                type="email"
-                required
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                  (min 8 characters)
-                </span>
-              </div>
-              <input
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="password"
-                type="password"
-                required
-                minLength="8"
-              />
-            </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                htmlFor="confirmPassword"
-              >
-                Confirm Password
-              </label>
-              <input
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="confirmPassword"
-                type="password"
-                required
-                minLength="8"
-              />
-            </div>
-
-            <div className="flex items-center">
-              <input
-                id="terms"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:ring-offset-zinc-900"
-                required
-              />
-              <label
-                htmlFor="terms"
-                className="ml-2 block text-sm text-zinc-700 dark:text-zinc-300"
-              >
-                I agree to the{" "}
-                <Link
-                  to="/terms"
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Terms & Conditions
-                </Link>
-              </label>
-            </div>
-
-            <button
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 transition-all duration-200 shadow-md hover:shadow-lg"
-              type="submit"
-            >
-              Create Account
-            </button>
+          <div className="relative">
+            <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-        </div>
-
-        <div className="px-6 py-4 bg-blue-50 dark:bg-zinc-800/50 text-center border-t border-blue-100 dark:border-zinc-700">
-          <p className="text-sm text-blue-800 dark:text-blue-300">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </form>
+          <div className="relative">
+            <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-2 rounded-md font-semibold transition duration-300"
+          >
+            Register
+          </button>
+        </form>
+        <p className="text-sm text-center text-gray-500">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
 
-export default RegistrationForm;
+export default Register;

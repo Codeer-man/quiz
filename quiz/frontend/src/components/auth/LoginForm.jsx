@@ -1,85 +1,93 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { FaLock, FaUser } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuth } from "../../context/auth";
 
-const LoginForm = () => {
+const Login = () => {
+  const navigate = useNavigate();
+  const api_url = import.meta.env.VITE_LOGIN_USER;
+
+  const { storeTokenInLs } = useAuth();
+
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [data, setData] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(api_url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        toast.error(result.message || "Login failed");
+        return;
+      }
+      storeTokenInLs(result.token);
+      navigate("/");
+      return toast.success("Login successful!");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.error("Login error:", error);
+    }
+  };
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100 dark:bg-zinc-800">
-      <form className="w-full max-w-md bg-white dark:bg-zinc-900 shadow-xl rounded-xl overflow-hidden border border-blue-300 dark:border-blue-700 transition-all duration-300 hover:shadow-2xl">
-        <div className="px-6 py-8 sm:px-10 sm:py-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-white mb-2">
-              Welcome Back!
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400">
-              We missed you, sign in to continue.
-            </p>
+    <div className="min-h-[80vh] bg-gradient-to-br from-blue-50 to-purple-50 flex justify-center items-center px-4">
+      <div className="bg-white shadow-xl rounded-xl max-w-md w-full p-8 space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Login</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="relative">
+            <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
-
-          <div className="space-y-6">
-            <div>
-              <label
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2"
-                htmlFor="email"
-              >
-                Email Address
-              </label>
-              <input
-                placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="email"
-                type="email"
-                required
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label
-                  className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-                  htmlFor="password"
-                >
-                  Password
-                </label>
-                <a
-                  href="#forgot-password"
-                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Forgot password?
-                </a>
-              </div>
-              <input
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                id="password"
-                type="password"
-                required
-                minLength="8"
-              />
-            </div>
-
-            <button
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium rounded-lg hover:from-blue-600 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 transition-all duration-200 shadow-md hover:shadow-lg"
-              type="submit"
-            >
-              Sign In
-            </button>
+          <div className="relative">
+            <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
           </div>
-        </div>
-
-        <div className="px-6 py-4 bg-blue-50 dark:bg-zinc-800/50 text-center border-t border-blue-100 dark:border-zinc-700">
-          <p className="text-sm text-blue-800 dark:text-blue-300">
-            Don't have an account?{" "}
-            <Link
-              to={"/register"}
-              className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-            >
-              Sign up
-            </Link>
-          </p>
-        </div>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-2 rounded-md font-semibold transition duration-300"
+          >
+            Login
+          </button>
+        </form>
+        <p className="text-sm text-center text-gray-500">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
 
-export default LoginForm;
+export default Login;
