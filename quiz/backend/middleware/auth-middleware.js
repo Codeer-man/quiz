@@ -18,7 +18,7 @@ const authMiddleware = async (req, res, next) => {
     if (!Userdata) {
       res.status(404).json({ message: "User not found" });
     }
-
+    req.username = Userdata.username;
     req.user = Userdata;
     req.id = Userdata._id;
     req.token = jwtToken;
