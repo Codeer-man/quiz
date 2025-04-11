@@ -2,7 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/auth-middleware");
 const role = require("../middleware/admin-middleware");
 const { CreateQuiz, addQuestion } = require("../controller/quizController");
-const { uploadMiddleware } = require("../middleware/upload-middleware");
+// const uploadMiddleware = require("../middleware/upload-middleware");
 // import delete question and quiz
 const {
   deleteQuestion,
@@ -12,11 +12,11 @@ const {
 // import update question and quiz
 const {
   updateQuestion,
-  updataQuiz,
+  updateQuiz,
 } = require("../controller/question.update.controller");
 
-// get quiz and question
-const { getQuiz, allQuiz } = require("../controller/quiz.get.controller");
+//import  get quiz and question
+const { getQuiz, getAllQuizzes } = require("../controller/quiz.get.controller");
 
 const route = express.Router();
 
@@ -24,15 +24,15 @@ const route = express.Router();
 route.post(
   "/createQuiz",
   authMiddleware,
-  uploadMiddleware.single("image"),
   role,
+  // uploadMiddleware.single(),
   CreateQuiz
 ); // create quiz
 route.post("/createQuestion/:quizId", authMiddleware, role, addQuestion); // add question in quiz
 
 // get quiz
 route.get("/:quizId", authMiddleware, getQuiz);
-route.get("/GetQuiz", authMiddleware, allQuiz);
+route.get("/get/data", getAllQuizzes);
 
 // delete
 route.delete("/quiz/:quizId", authMiddleware, deleteQuiz); // delete quiz
@@ -51,6 +51,6 @@ route.patch(
   role,
   updateQuestion
 );
-route.patch("/quiz/:quizId/update", authMiddleware, role, updataQuiz); //update the quiz
+route.patch("/quiz/:quizId/update", authMiddleware, role, updateQuiz); //update the quiz
 
 module.exports = route;

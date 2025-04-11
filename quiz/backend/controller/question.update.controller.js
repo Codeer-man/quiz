@@ -1,7 +1,6 @@
 const Quiz = require("../model/quiz-model");
-const { options } = require("../routes/quiz.route");
 
-// update the question  fomr thr quiz
+// update the question from the quiz
 const updateQuestion = async (req, res) => {
   try {
     const { quizId, questionId } = req.params;
@@ -13,23 +12,24 @@ const updateQuestion = async (req, res) => {
       return res.status(404).json({ message: "quizId not provided" });
     }
 
-    const findQuestion = await Quiz.findById(quizId);
-    if (!findQuestion) {
-      return res.status(404).json({ message: "Question id not found" });
+    const findQuiz = await Quiz.findById(quizId);
+    if (!findQuiz) {
+      return res.status(404).json({ message: "Quiz id not found" });
     }
 
-    // find the question array num
-    const findQuestionIndex = findQuestion.questions.findIndex(
+    // find the question array index
+    const findQuestionIndex = findQuiz.questions.findIndex(
       (que) => que._id.toString() === questionId
     );
 
     if (findQuestionIndex === -1) {
-      res
-        .status(404)
-        .json({ message: "question id not ", questionId: questionId });
+      return res.status(404).json({
+        message: "Question id not found",
+        questionId: questionId,
+      });
     }
 
-    const question = findQuestion.questions[findQuestionIndex];
+    const question = findQuiz.questions[findQuestionIndex];
 
     // Update the modified question and leave the unmodified ones unchanged
     question.questionText = req.body.questionText || question.questionText;
@@ -41,7 +41,7 @@ const updateQuestion = async (req, res) => {
       question.options = req.body.options;
     }
 
-    // update only one or multiple optoins options
+    // update only one or multiple options
     if (Array.isArray(req.body.updateOptions)) {
       req.body.updateOptions.forEach(({ index, value }) => {
         if (
@@ -54,24 +54,27 @@ const updateQuestion = async (req, res) => {
       });
     }
 
-    //   to save
-    await findQuestion.save();
+    // save the updated quiz
+    await findQuiz.save();
     return res.status(200).json({
       message: "Question updated successfully",
-      data: findQuestion,
+      data: findQuiz,
     });
   } catch (error) {
     console.error("Error updating question", error);
-    return res.status(500).json({ message: "Invalid server error", error });
+    return res.status(500).json({ message: "Server error", error });
   }
 };
 
-const updataQuiz = async (req, res) => {
+// update quiz details
+const updateQuiz = async (req, res) => {
   try {
     const { quizId } = req.params;
     const { title, category, difficulty } = req.body;
 
-    if (!quizId) return res.status(404).json({ message: "id not provided" });
+    if (!quizId) {
+      return res.status(404).json({ message: "Quiz id not provided" });
+    }
 
     const quiz = await Quiz.findById(quizId);
 
@@ -79,18 +82,18 @@ const updataQuiz = async (req, res) => {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    // update if change occour
+    // update quiz details if provided
     quiz.title = title || quiz.title;
     quiz.category = category || quiz.category;
     quiz.difficulty = difficulty || quiz.difficulty;
 
-    return res.status(200).json({ message: "quiz  updated" });
+    // save the updated quiz
+    await quiz.save();
+    return res.status(200).json({ message: "Quiz updated successfully" });
   } catch (error) {
-    console.error("error updating quiz", error);
-    return res
-      .status(500)
-      .json({ message: "Invalid server Error", error: error });
+    console.error("Error updating quiz", error);
+    return res.status(500).json({ message: "Server error", error });
   }
 };
 
-module.exports = { updateQuestion, updataQuiz };
+module.exports = { updateQuestion, updateQuiz };

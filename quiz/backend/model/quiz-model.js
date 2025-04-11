@@ -51,24 +51,22 @@ const quizSchema = new mongoose.Schema(
       type: [questionSchema],
       default: [],
     },
-    url: {
-      type: String,
-      required: true,
-    },
-    image: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    publicId: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+    // url: {
+    //   type: String,
+    //   required: true,
+    // },
+    // image: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
+    // publicId: {
+    //   type: String,
+    //   required: true,
+    //   trim: true,
+    // },
   },
   { timestamps: true }
 );
 
-const Quiz = mongoose.model("Quiz", quizSchema);
-
-module.exports = Quiz;
+module.exports = mongoose.model("Quiz", quizSchema);
