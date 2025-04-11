@@ -12,8 +12,6 @@ import { useAuth } from "../../context/auth";
 export default function HomePage() {
   const { admin } = useAuth();
 
-  console.log(admin);
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -139,7 +137,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      {admin && (
+      {admin === "admin" ? (
         <Link
           to="/admin"
           className=" fixed right-6 bottom-6 flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
@@ -147,7 +145,7 @@ export default function HomePage() {
           <FaUserShield className="mr-2" />
           <span>Admin Panel</span>
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }

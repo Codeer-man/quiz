@@ -7,10 +7,10 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 import Home from "./pages/public/Home";
-import QuizPage from "./components/quiz/QuizPage";
+import QuizPage from "./pages/public/QuizPage";
 import Logout from "./pages/auth/Logout";
 import Footer from "./components/Footer";
-import QuizzesPage from "./pages/public/Landing";
+import Landing from "./pages/public/Landing";
 import NotFoundPage from "./components/NotFound";
 
 export default function App() {
@@ -22,8 +22,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
 
           {/* quiz  */}
-          <Route path="/quizPage" element={<QuizPage />} />
-          <Route path="/quizzes" element={<QuizzesPage />} />
+          <Route path="/quizPage/:id" element={<QuizPage />} />
+          <Route path="/quizzes" element={<Landing />} />
 
           {/* auth  */}
           <Route path="/login" element={<Login />} />

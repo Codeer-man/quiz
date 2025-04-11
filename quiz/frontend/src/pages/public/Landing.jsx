@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaSearch, FaClock, FaQuestionCircle } from "react-icons/fa";
 import SkeletonLoading from "../../components/loading/skeletion";
 
-export default function QuizzesPage() {
+export default function Landing() {
   const [quizzes, setAllQuiz] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,6 @@ export default function QuizzesPage() {
       </div>
     );
   }
-
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -128,7 +127,7 @@ export default function QuizzesPage() {
                     </div>
                   </div>
                   <Link
-                    to={`/quiz/${quiz._id}`}
+                    to={`/quizPage/${quiz._id}`}
                     className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors"
                   >
                     Start Quiz
