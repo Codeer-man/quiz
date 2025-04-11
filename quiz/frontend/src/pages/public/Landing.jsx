@@ -1,51 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch, FaClock, FaQuestionCircle } from "react-icons/fa";
+import SkeletonLoading from "../../components/loading/skeletion";
 
 export default function QuizzesPage() {
-  // Sample quiz data
-  const quizzes = [
-    {
-      id: 1,
-      title: "JavaScript Fundamentals",
-      category: "Programming",
-      questions: 15,
-      time: 20,
-      difficulty: "Medium",
-      image:
-        "https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-    },
-    {
-      id: 2,
-      title: "World Capitals",
-      category: "Geography",
-      questions: 20,
-      time: 15,
-      difficulty: "Easy",
-      image:
-        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-    },
-    {
-      id: 3,
-      title: "Ancient Civilizations",
-      category: "History",
-      questions: 25,
-      time: 30,
-      difficulty: "Hard",
-      image:
-        "https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-    },
-    {
-      id: 4,
-      title: "Human Anatomy",
-      category: "Science",
-      questions: 18,
-      time: 25,
-      difficulty: "Medium",
-      image:
-        "https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-    },
-  ];
+  const [quizzes, setAllQuiz] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const api_url = `${import.meta.env.VITE_GETALL_QUIZ}`;
+
+  // getting all the quiz for displaying
+  const GetAllQuiz = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(api_url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        return toast.error(data.message);
+      }
+      return setAllQuiz(data.data);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    GetAllQuiz();
+  }, [api_url]);
+
+  if (loading) {
+    return (
+      <div>
+        <SkeletonLoading />
+      </div>
+    );
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
@@ -75,57 +72,83 @@ export default function QuizzesPage() {
 
         {/* Quizzes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {quizzes.map((quiz) => (
-            <div
-              key={quiz.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-            >
-              <div className="h-48 overflow-hidden">
-                <img
-                  src={quiz.image}
-                  alt={quiz.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase font-semibold tracking-wide">
-                    {quiz.category}
-                  </span>
-                  <span
-                    className={`inline-block text-xs px-2 py-1 rounded-full uppercase font-semibold tracking-wide ${
-                      quiz.difficulty === "Easy"
-                        ? "bg-green-100 text-green-800"
-                        : quiz.difficulty === "Medium"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
+          {quizzes.length > 0 ? (
+            quizzes.map((quiz) => (
+              <div
+                key={quiz._id}
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              >
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={quiz.image}
+                    alt={quiz.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase font-semibold tracking-wide">
+                      {quiz.category}
+                    </span>
+                    <span
+                      className={`inline-block text-xs px-2 py-1 rounded-full uppercase font-semibold tracking-wide ${
+                        quiz.difficulty === "Easy"
+                          ? "bg-green-100 text-green-800"
+                          : quiz.difficulty === "Medium"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {quiz.difficulty}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                    {quiz.title}
+                  </h3>
+                  <div className="flex justify-between text-sm text-gray-500 mb-4">
+                    <div className="flex items-center">
+                      <FaQuestionCircle className="mr-1" />
+                      <span>{quiz.questions?.length || 0} questions</span>
+                    </div>
+                    <div className="flex items-center">
+                      <FaClock className="mr-1" />
+                      {/* time concept  */}
+                      <span>
+                        {(() => {
+                          const questionCount = quiz.questions?.length || 0;
+                          const totalSeconds = questionCount * 30;
+
+                          if (totalSeconds < 60) {
+                            return `${totalSeconds} secs`;
+                          } else {
+                            return `${Math.ceil(totalSeconds / 60)} mins`;
+                          }
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                  <Link
+                    to={`/quiz/${quiz._id}`}
+                    className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors"
                   >
-                    {quiz.difficulty}
-                  </span>
+                    Start Quiz
+                  </Link>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                  {quiz.title}
-                </h3>
-                <div className="flex justify-between text-sm text-gray-500 mb-4">
-                  <div className="flex items-center">
-                    <FaQuestionCircle className="mr-1" />
-                    <span>{quiz.questions} questions</span>
-                  </div>
-                  <div className="flex items-center">
-                    <FaClock className="mr-1" />
-                    <span>{quiz.time} mins</span>
-                  </div>
-                </div>
-                <Link
-                  to={`/quiz/${quiz.id}`}
-                  className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors"
-                >
-                  Start Quiz
-                </Link>
               </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <div className="text-gray-500 text-xl mb-4">
+                No quizzes available at the moment
+              </div>
+              <Link
+                to="/"
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Return to Home
+              </Link>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
