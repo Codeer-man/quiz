@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const authorizeToken = `Bearer ${token}`;
   const [user, setUser] = useState(null);
+  const [admin, setAdmin] = useState("");
 
   // function to store token
   const storeTokenInLs = (serverToken) => {
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }) => {
       });
       if (response.ok) {
         const data = await response.json();
+        setAdmin(data.userdata.role);
         setUser(data);
       } else {
         setUser(null);
@@ -53,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
   return (
     <AuthContext.Provider
-      value={{ storeTokenInLs, token, user, loggedIn, logout }}
+      value={{ storeTokenInLs, token, user, loggedIn, logout, admin }}
     >
       {children}
     </AuthContext.Provider>
