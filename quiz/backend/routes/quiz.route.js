@@ -2,7 +2,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/auth-middleware");
 const role = require("../middleware/admin-middleware");
 const { CreateQuiz, addQuestion } = require("../controller/quizController");
-// const uploadMiddleware = require("../middleware/upload-middleware");
+const uploadMiddleware = require("../middleware/upload-middleware");
 // import delete question and quiz
 const {
   deleteQuestion,
@@ -25,7 +25,7 @@ route.post(
   "/createQuiz",
   authMiddleware,
   role,
-  // uploadMiddleware.single(),
+  // uploadMiddleware.single("image"),
   CreateQuiz
 ); // create quiz
 route.post("/createQuestion/:quizId", authMiddleware, role, addQuestion); // add question in quiz

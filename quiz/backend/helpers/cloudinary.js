@@ -1,8 +1,8 @@
-const cloudinary = require("cloudinary");
+const cloudinary = require("../config/cloudinary");
 
 const uploadToCloudinary = async (filepath) => {
   try {
-    const result = await cloudinary.UploadStream.upload(filepath);
+    const result = await cloudinary.uploader.upload(filepath);
 
     return {
       url: result.url,
@@ -13,5 +13,4 @@ const uploadToCloudinary = async (filepath) => {
     throw new Error(error);
   }
 };
-
 module.exports = { uploadToCloudinary };

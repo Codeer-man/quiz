@@ -9,7 +9,7 @@ const CreateQuiz = async (req, res) => {
     // if (!file.path)
     //   return res.status(404).json({ message: "file path not found" });
 
-    // const { url, publicId } = await uploadToCloudinary(req.fil.path);
+    // const { url, publicId } = await uploadToCloudinary(req.file.path);
 
     const createQuiz = Quiz({
       title,
@@ -18,14 +18,15 @@ const CreateQuiz = async (req, res) => {
       // url,
       // publicId,
       // image: url,
-      question: [], //start with empty erray
+      question: [],
       createdBy: req.id,
       username: req.username,
     });
     await createQuiz.save();
     return res.status(200).json({ message: "Quiz created", data: createQuiz });
   } catch (error) {
-    return res.status(500).json({ message: "Faild to create Quiz", error });
+    console.error(error);
+    return res.status(500).json({ error: error });
   }
 };
 
